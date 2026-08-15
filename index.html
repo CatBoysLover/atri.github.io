@@ -3,281 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Викторина</title>
+    <title>Windows XP</title>
+    <!-- Подключаем стили старой винды для идеальной атмосферы -->
+    <link rel="stylesheet" href="https://unpkg.com">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background: #3b6ea5; /* Тот самый классический синий цвет рабочего стола XP */
             margin: 0;
-            overflow: hidden;
-            position: relative;
-        }
-        .quiz-container {
-            background-color: #1e1e1e;
-            padding: 40px;
-            border-radius: 16px;
-            border: 1px solid #333333;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            text-align: center;
-            max-width: 440px;
-            width: 85%;
-            z-index: 10;
-            transition: all 0.3s ease;
-        }
-        /* Анимация жесткой тряски экрана при скримере */
-        .shake {
-            animation: shakeAnim 0.1s infinite;
-        }
-        @keyframes shakeAnim {
-            0% { transform: translate(2px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(0px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(2px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(2px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-        h2 { 
-            color: #ffffff; 
-            margin-bottom: 30px; 
-            font-size: 22px; 
-            font-weight: 500;
-            line-height: 1.4;
-        }
-        .btn {
-            background-color: #2a2a2a;
-            color: #e0e0e0;
-            border: 1px solid #444444;
-            padding: 14px 20px;
-            margin: 12px auto;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            transition: all 0.2s ease;
-            width: 100%;
-            display: block;
-            text-align: center;
-            box-sizing: border-box;
-        }
-        .btn:hover { 
-            background-color: #ffffff; 
-            color: #121212; 
-            border-color: #ffffff;
-            transform: translateY(-1px); 
-        }
-        #feedback { 
-            font-weight: 400; 
-            margin-top: 25px; 
-            height: 25px; 
-            font-size: 16px; 
-            letter-spacing: 0.5px;
-        }
-        .success { color: #ffffff; font-weight: 600; }
-        
-        /* Стили самого скримера */
-        #screamer-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
+            padding: 0;
+            font-family: Tahoma, Geneva, sans-serif;
             height: 100vh;
-            background-color: #000000;
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        #screamer-img {
-            max-height: 90vh;
-            max-width: 90vw;
-            animation: zoomScream 0.2s ease-out forwards;
-        }
-        @keyframes zoomScream {
-            0% { transform: scale(0.5); }
-            100% { transform: scale(1.3); }
-        }
-
-        .spark {
-            position: absolute;
-            color: #ffffff;
-            font-size: 14px;
-            animation: fall linear infinite;
-            z-index: 1;
+            overflow: hidden;
             user-select: none;
         }
-        @keyframes fall {
-            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+
+        /* Рабочий стол */
+        .desktop {
+            height: calc(100vh - 30px);
+            position: relative;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Ярлык папки */
+        .icon {
+            width: 80px;
+            text-align: center;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .icon:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .icon img {
+            width: 45px;
+            height: 45px;
+            display: block;
+            margin: 0 auto 5px auto;
+        }
+        .icon span {
+            color: white;
+            font-size: 11px;
+            text-shadow: 1px 1px 1px #000;
+            word-wrap: break-word;
+        }
+
+        /* Стили окон */
+        .window {
+            position: absolute;
+            display: none;
+            z-index: 100;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        /* Специфичные размеры для папки и блокнота */
+        #folder-window {
+            width: 350px;
+            top: 100px;
+            left: 150px;
+        }
+        #notepad-window {
+            width: 90%;
+            max-width: 600px;
+            top: 50px;
+            left: 5%;
+        }
+
+        .window-body {
+            background: #ffffff;
+            margin: 4px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Содержимое папки */
+        .folder-content {
+            display: flex;
+            gap: 20px;
+            min-height: 150px;
+            background: white;
+            border: 2px inset #7f9db9;
+            padding: 15px;
+        }
+
+        /* Текст внутри блокнота */
+        .notepad-text {
+            width: 100%;
+            height: 380px;
+            border: 2px inset #7f9db9;
+            padding: 12px;
+            box-sizing: border-box;
+            background: #ffffff;
+            color: #000000;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace; /* Шрифты блокнота */
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            user-select: text;
+        }
+
+        /* Нижняя панель задач */
+        .taskbar {
+            height: 30px;
+            background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #1b4ca3 92%, #163e8c 100%);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+        .start-button {
+            height: 100%;
+            padding: 0 15px;
+            background: linear-gradient(to bottom, #388e3c 0%, #4caf50 10%, #388e3c 20%, #2e7d32 90%, #1b5e20 100%);
+            color: white;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            box-shadow: 1px 0 3px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 1px #000;
         }
     </style>
 </head>
 <body>
 
-<!-- Контейнер для вылетающей страшной рожи -->
-<div id="screamer-overlay">
-    <!-- SVG-код страшной зубастой рожи, чтобы не зависеть от внешних картинок -->
-    <svg id="screamer-img" xmlns="http://w3.org" viewBox="0 0 100 100" width="400" height="400">
-        <path d="M25,30 Q20,15 35,22 Q40,25 35,28 Q30,30 25,30 Z" fill="#ffffff" />
-        <path d="M75,30 Q80,15 65,22 Q60,25 65,28 Q70,30 75,30 Z" fill="#ffffff" />
-        <circle cx="31" cy="23" r="2" fill="#000000" />
-        <circle cx="69" cy="23" r="2" fill="#000000" />
-        <path d="M15,55 Q50,40 85,55 Q85,75 50,85 Q15,75 15,55 Z" fill="#ffffff" />
-        <path d="M18,55 L22,62 L26,55 L30,64 L34,56 L38,65 L42,56 L46,65 L50,57 L54,65 L58,57 L62,65 L66,57 L70,64 L74,56 L78,63 L82,55" stroke="#000000" stroke-width="1.5" fill="none" />
-        <path d="M19,65 L23,58 L27,64 L31,57 L35,64 L39,57 L43,64 L47,57 L51,64 L55,57 L59,64 L63,57 L67,64 L71,58 L75,64 L79,57 L81,63" stroke="#000000" stroke-width="1.5" fill="none" />
-    </svg>
-</div>
+<div class="desktop">
+    <!-- Ярлык главной папки на рабочем столе -->
+    <div class="icon" onclick="openWindow('folder-window')">
+        <img src="https://alexmeub.com" alt="Folder">
+        <span>Diana</span>
+    </div>
 
-<div class="quiz-container" id="main-card">
-    <div id="quiz-box">
-        <h2 id="question">Загрузка...</h2>
-        <div id="options"></div>
-        <div id="feedback"></div>
+    <!-- Окно Проводника (Папка Diana) -->
+    <div class="window" id="folder-window">
+        <div class="title-bar">
+            <div class="title-bar-text">Diana</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="closeWindow('folder-window')"></button>
+                <button aria-label="Maximize"></button>
+                <button aria-label="Close" onclick="closeWindow('folder-window')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="folder-content">
+                <!-- Внутри папки лежит текстовый файл -->
+                <div class="icon" onclick="openWindow('notepad-window')" style="position: static;">
+                    <img src="https://alexmeub.com" alt="Notepad">
+                    <span style="color: black; text-shadow: none;">Причины.txt</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Окно Блокнота с твоим текстом -->
+    <div class="window" id="notepad-window">
+        <div class="title-bar">
+            <div class="title-bar-text">Причины.txt — Блокнот</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize" onclick="closeWindow('notepad-window')"></button>
+                <button aria-label="Maximize"></button>
+                <button aria-label="Close" onclick="closeWindow('notepad-window')"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="notepad-text">Причины почему ты прекрасна
+1. Ты ценишь по настоящему людей
+2. Ты добрая
+3. Ты умеешь быть искренной 
+4. Ты умная
+5. У тебя красивый голос
+6. Ты сильная
+7. Ты хорошая, не сильно требовательная и очень ласковая
+
+Ты прекрасная на самом деле, я рад что вообще с тобой, я буду продолжать быть с тобой.
+Никогда не обращай внимание, на мнение других людей, если оно не сконструированное, ведь ты достойна лучшего.
+Ты красивая, ты умная и хорошая девочка, я никогда не понимал, как к тебе можно плохо относится. Я делал больно, но от этого мне тоже было больно. 
+Ты прекрасна, ведь ты настоящая. Ты не боишься говорить правду, ты можете высказать свое мнение, с тобой есть о чем поговорить. На деле, это может и не заметно, но пойми, что это заметит каждый человек.
+Давай по честному, ты мне говорила что я могу законтактить с любым человеком, да по сути так и есть, но давай по честному, а ты чтоли нет?
+У тебя тоже очень хорошо получается, ты можешь это и я знаю, ты способна на такое, ты можешь тоже самое, что могу и я. Ты не отличаешься способностями какими то, ты можешь все тоже самое, что и я.
+Ты можете общаться, с тобой интересно. У тебя очень красивый голос, у тебя всегда есть что рассказать, на какую тему пошутить и тп. Ты очень хороший собеседник, сказать честно, даже самый любимый собеседник)
+С тобой очень комфортно и приятно общаться, ты всегда можешь поддержать диалог, помочь, дать совет. Так что, Диан, ты очень хороша во всем, ты хорошая.
+Мне нравится все в тебе. Ты умеешь уважать людей, любить, ценить, представь только, таких девушек как ты очень мало.
+На самом то деле, ты не просто шаблонная, Диан, если с тобой общаться часто, то можно сразу понять, что ты не просто шаблонная девка, ты что то другое. Поэтому ты и заинтересовала меня. Я не шучу, ты прекрасна.</div>
+        </div>
     </div>
 </div>
 
+<!-- Нижняя панель для вида -->
+<div class="taskbar">
+    <div class="start-button">пуск</div>
+</div>
+
 <script>
-    const quizData = [
-        {
-            q: "Какой мой любимый исполнитель?",
-            a: ["aquakey", "haru matsui", "Vasya Geniy1337"],
-            correct: 0 
-        },
-        {
-            q: "Почему я твой бывший?",
-            a: ["потому что", "хз", "потому что"],
-            correct: "ALL" 
-        },
-        {
-            q: "Что я предпочитаю?",
-            a: ["быть в одиночистве", "быть с друзьями", "с любимым человеком", "в компаниях"],
-            correct: 2 
-        },
-        {
-            q: "Какие цветы ты любишь?",
-            a: ["лилии", "оранжевые лилии", "розы ( черные )", "тюльпан"],
-            correct: 0 
-        },
-        {
-            q: "Какого числа мы познакомились?",
-            a: ["5 мая", "8 мая", "9 мая", "7 мая"],
-            correct: 3 
-        },
-        {
-            q: "Когда мы впервые погуляли ( вместе )?",
-            a: ["9 мая", "16 мая", "17 мая", "8 мая"],
-            correct: 0 
-        },
-        {
-            q: "Что такое 1726270103095?",
-            a: ["даты", "рандом цифры / числа", "хуй знает"],
-            correct: 0 
-        }
-    ];
+    // Простая логика открытия и закрытия окон
+    function openWindow(id) {
+        const win = document.getElementById(id);
+        win.style.display = 'block';
+        
+        // Переносим открытое окно на передний план
+        document.getElementById('folder-window').style.zIndex = '100';
+        document.getElementById('notepad-window').style.zIndex = '100';
+        win.style.zIndex = '101';
 
-    let currentQuestion = 0;
-
-    // Генерируем жуткий звук скримера на лету через Web Audio API (чтобы не качать mp3)
-    function playScreamSound() {
-        try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioContext();
-            
-            // Основной жесткий шум
-            const bufferSize = ctx.sampleRate * 1.5;
-            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-            
-            const noise = ctx.createBufferSource();
-            noise.buffer = buffer;
-
-            // Фильтр для жесткости звука
-            const filter = ctx.createBiquadFilter();
-            filter.type = "bandpass";
-            filter.frequency.value = 1000;
-
-            // Низкочастотный гул для давления на уши
-            const osc = ctx.createOscillator();
-            osc.type = "sawtooth";
-            osc.frequency.setValueAtTime(120, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 1.2);
-
-            const gainNode = ctx.createGain();
-            gainNode.gain.setValueAtTime(1.5, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.4);
-
-            noise.connect(filter);
-            filter.connect(gainNode);
-            osc.connect(gainNode);
-            gainNode.connect(ctx.destination);
-
-            noise.start();
-            osc.start();
-        } catch (e) {
-            console.log("Аудио контекст заблокирован браузером до первого клика");
+        // Адаптивное центрирование блокнота на мобилках
+        if (id === 'notepad-window' && window.innerWidth < 600) {
+            win.style.left = '0px';
+            win.style.top = '10px';
+            win.style.width = '100vw';
         }
     }
 
-    function loadQuestion() {
-        const feedbackDiv = document.getElementById("feedback");
-        feedbackDiv.innerText = "";
-        
-        if (currentQuestion >= quizData.length) {
-            document.getElementById("quiz-box").innerHTML = "<h2>Викторина успешно пройдена. ✨</h2>";
-            startSparkRain();
-            return;
-        }
-
-        const currentData = quizData[currentQuestion];
-        document.getElementById("question").innerText = currentData.q;
-        
-        const optionsDiv = document.getElementById("options");
-        optionsDiv.innerHTML = "";
-
-        currentData.a.forEach((option, index) => {
-            const button = document.createElement("button");
-            button.innerText = option;
-            button.className = "btn";
-            button.onclick = () => checkAnswer(index);
-            optionsDiv.appendChild(button);
-        });
+    function closeWindow(id) {
+        document.getElementById(id).style.display = 'none';
     }
 
-    function triggerScreamer() {
-        const overlay = document.getElementById("screamer-overlay");
-        const card = document.getElementById("main-card");
-        
-        // Включаем рожу и тряску
-        overlay.style.display = "flex";
-        document.body.classList.add("shake");
-        card.classList.add("shake");
-        
-        playScreamSound();
-
-        // Через 1.5 секунды убираем скример и сбрасываем викторину в начало
-        setTimeout(() => {
-            overlay.style.display = "none";
-            document.body.classList.remove("shake");
-            card.classList.remove("shake");
-            
-            currentQuestion = 0; // СБРОС НАЧАЛО ВЫБОРКИ
-            loadQuestion();
-        }, 1500);
+    // Автоматически позиционируем блокнот по центру экрана для ПК
+    if (window.innerWidth > 600) {
+        document.getElementById('notepad-window').style.left = (window.innerWidth / 2 - 300) + 'px';
+        document.getElementById('notepad-window').style.top = '40px';
     }
-
-    function checkAnswer(selectedIndex) {
-        const currentData = quizData[currentQuestion];
-        const feedbackDiv = document.getElementById("feedback");
-
-        if (currentData.correct === "ALL" || selectedIndex === currentData.correct) {
+</script>
+</body>
+</html>
