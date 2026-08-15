@@ -29,6 +29,23 @@
             z-index: 10;
             transition: all 0.3s ease;
         }
+        /* Анимация жесткой тряски экрана при скримере */
+        .shake {
+            animation: shakeAnim 0.1s infinite;
+        }
+        @keyframes shakeAnim {
+            0% { transform: translate(2px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(0px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(2px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(2px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
         h2 { 
             color: #ffffff; 
             margin-bottom: 30px; 
@@ -65,8 +82,30 @@
             letter-spacing: 0.5px;
         }
         .success { color: #ffffff; font-weight: 600; }
-        .error { color: #888888; }
         
+        /* Стили самого скримера */
+        #screamer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        #screamer-img {
+            max-height: 90vh;
+            max-width: 90vw;
+            animation: zoomScream 0.2s ease-out forwards;
+        }
+        @keyframes zoomScream {
+            0% { transform: scale(0.5); }
+            100% { transform: scale(1.3); }
+        }
+
         .spark {
             position: absolute;
             color: #ffffff;
@@ -83,7 +122,21 @@
 </head>
 <body>
 
-<div class="quiz-container">
+<!-- Контейнер для вылетающей страшной рожи -->
+<div id="screamer-overlay">
+    <!-- SVG-код страшной зубастой рожи, чтобы не зависеть от внешних картинок -->
+    <svg id="screamer-img" xmlns="http://w3.org" viewBox="0 0 100 100" width="400" height="400">
+        <path d="M25,30 Q20,15 35,22 Q40,25 35,28 Q30,30 25,30 Z" fill="#ffffff" />
+        <path d="M75,30 Q80,15 65,22 Q60,25 65,28 Q70,30 75,30 Z" fill="#ffffff" />
+        <circle cx="31" cy="23" r="2" fill="#000000" />
+        <circle cx="69" cy="23" r="2" fill="#000000" />
+        <path d="M15,55 Q50,40 85,55 Q85,75 50,85 Q15,75 15,55 Z" fill="#ffffff" />
+        <path d="M18,55 L22,62 L26,55 L30,64 L34,56 L38,65 L42,56 L46,65 L50,57 L54,65 L58,57 L62,65 L66,57 L70,64 L74,56 L78,63 L82,55" stroke="#000000" stroke-width="1.5" fill="none" />
+        <path d="M19,65 L23,58 L27,64 L31,57 L35,64 L39,57 L43,64 L47,57 L51,64 L55,57 L59,64 L63,57 L67,64 L71,58 L75,64 L79,57 L81,63" stroke="#000000" stroke-width="1.5" fill="none" />
+    </svg>
+</div>
+
+<div class="quiz-container" id="main-card">
     <div id="quiz-box">
         <h2 id="question">Загрузка...</h2>
         <div id="options"></div>
@@ -132,6 +185,50 @@
 
     let currentQuestion = 0;
 
+    // Генерируем жуткий звук скримера на лету через Web Audio API (чтобы не качать mp3)
+    function playScreamSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+            
+            // Основной жесткий шум
+            const bufferSize = ctx.sampleRate * 1.5;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+
+            // Фильтр для жесткости звука
+            const filter = ctx.createBiquadFilter();
+            filter.type = "bandpass";
+            filter.frequency.value = 1000;
+
+            // Низкочастотный гул для давления на уши
+            const osc = ctx.createOscillator();
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(120, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 1.2);
+
+            const gainNode = ctx.createGain();
+            gainNode.gain.setValueAtTime(1.5, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.4);
+
+            noise.connect(filter);
+            filter.connect(gainNode);
+            osc.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            noise.start();
+            osc.start();
+        } catch (e) {
+            console.log("Аудио контекст заблокирован браузером до первого клика");
+        }
+    }
+
     function loadQuestion() {
         const feedbackDiv = document.getElementById("feedback");
         feedbackDiv.innerText = "";
@@ -157,39 +254,30 @@
         });
     }
 
+    function triggerScreamer() {
+        const overlay = document.getElementById("screamer-overlay");
+        const card = document.getElementById("main-card");
+        
+        // Включаем рожу и тряску
+        overlay.style.display = "flex";
+        document.body.classList.add("shake");
+        card.classList.add("shake");
+        
+        playScreamSound();
+
+        // Через 1.5 секунды убираем скример и сбрасываем викторину в начало
+        setTimeout(() => {
+            overlay.style.display = "none";
+            document.body.classList.remove("shake");
+            card.classList.remove("shake");
+            
+            currentQuestion = 0; // СБРОС НАЧАЛО ВЫБОРКИ
+            loadQuestion();
+        }, 1500);
+    }
+
     function checkAnswer(selectedIndex) {
         const currentData = quizData[currentQuestion];
         const feedbackDiv = document.getElementById("feedback");
 
         if (currentData.correct === "ALL" || selectedIndex === currentData.correct) {
-            feedbackDiv.className = "success";
-            feedbackDiv.innerText = "Верно";
-            currentQuestion++;
-            setTimeout(loadQuestion, 1000);
-        } else {
-            feedbackDiv.className = "error";
-            feedbackDiv.innerText = "Неправильно";
-        }
-    }
-
-    function startSparkRain() {
-        setInterval(() => {
-            const spark = document.createElement("div");
-            spark.className = "spark";
-            spark.innerText = randomChoice(['✦', '✧', '•', '◦']);
-            spark.style.left = Math.random() * 100 + "vw";
-            spark.style.animationDuration = Math.random() * 2 + 2 + "s";
-            spark.style.opacity = Math.random() * 0.7 + 0.3;
-            document.body.appendChild(spark);
-            setTimeout(() => spark.remove(), 4000);
-        }, 120);
-    }
-
-    function randomChoice(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    loadQuestion();
-</script>
-</body>
-</html>
