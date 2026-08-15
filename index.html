@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Викторина</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .quiz-container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #333333;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 440px;
+            width: 85%;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        h2 { 
+            color: #ffffff; 
+            margin-bottom: 30px; 
+            font-size: 22px; 
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        .btn {
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #444444;
+            padding: 14px 20px;
+            margin: 12px auto;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            width: 100%;
+            display: block;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .btn:hover { 
+            background-color: #ffffff; 
+            color: #121212; 
+            border-color: #ffffff;
+            transform: translateY(-1px); 
+        }
+        #feedback { 
+            font-weight: 400; 
+            margin-top: 25px; 
+            height: 25px; 
+            font-size: 16px; 
+            letter-spacing: 0.5px;
+        }
+        .success { color: #ffffff; font-weight: 600; }
+        .error { color: #888888; }
+        
+        .spark {
+            position: absolute;
+            color: #ffffff;
+            font-size: 14px;
+            animation: fall linear infinite;
+            z-index: 1;
+            user-select: none;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-box">
+        <h2 id="question">Загрузка...</h2>
+        <div id="options"></div>
+        <div id="feedback"></div>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            q: "Какой мой любимый исполнитель?",
+            a: ["aquakey", "haru matsui", "Vasya Geniy1337"],
+            correct: 0 
+        },
+        {
+            q: "Почему я твой бывший?",
+            a: ["потому что", "хз", "потому что"],
+            correct: "ALL" 
+        },
+        {
+            q: "Что я предпочитаю?",
+            a: ["быть в одиночистве", "быть с друзьями", "с любимым человеком", "в компаниях"],
+            correct: 2 
+        },
+        {
+            q: "Какие цветы ты любишь?",
+            a: ["лилии", "оранжевые лилии", "розы ( черные )", "тюльпан"],
+            correct: 0 
+        },
+        {
+            q: "Какого числа мы познакомились?",
+            a: ["5 мая", "8 мая", "9 мая", "7 мая"],
+            correct: 3 
+        },
+        {
+            q: "Когда мы впервые погуляли ( вместе )?",
+            a: ["9 мая", "16 мая", "17 мая", "8 мая"],
+            correct: 0 
+        },
+        {
+            q: "Что такое 1726270103095?",
+            a: ["даты", "рандом цифры / числа", "хуй знает"],
+            correct: 0 
+        }
+    ];
+
+    let currentQuestion = 0;
+
+    function loadQuestion() {
+        const feedbackDiv = document.getElementById("feedback");
+        feedbackDiv.innerText = "";
+        
+        if (currentQuestion >= quizData.length) {
+            document.getElementById("quiz-box").innerHTML = "<h2>Викторина успешно пройдена. ✨</h2>";
+            startSparkRain();
+            return;
+        }
+
+        const currentData = quizData[currentQuestion];
+        document.getElementById("question").innerText = currentData.q;
+        
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+
+        currentData.a.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.innerText = option;
+            button.className = "btn";
+            button.onclick = () => checkAnswer(index);
+            optionsDiv.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedIndex) {
+        const currentData = quizData[currentQuestion];
+        const feedbackDiv = document.getElementById("feedback");
+
+        if (currentData.correct === "ALL" || selectedIndex === currentData.correct) {
+            feedbackDiv.className = "success";
+            feedbackDiv.innerText = "Верно";
+            currentQuestion++;
+            setTimeout(loadQuestion, 1000);
+        } else {
+            feedbackDiv.className = "error";
+            feedbackDiv.innerText = "Неправильно";
+        }
+    }
+
+    function startSparkRain() {
+        setInterval(() => {
+            const spark = document.createElement("div");
+            spark.className = "spark";
+            spark.innerText = randomChoice(['✦', '✧', '•', '◦']);
+            spark.style.left = Math.random() * 100 + "vw";
+            spark.style.animationDuration = Math.random() * 2 + 2 + "s";
+            spark.style.opacity = Math.random() * 0.7 + 0.3;
+            document.body.appendChild(spark);
+            setTimeout(() => spark.remove(), 4000);
+        }, 120);
+    }
+
+    function randomChoice(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    loadQuestion();
+</script>
+</body>
+</html>
