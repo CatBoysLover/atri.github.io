@@ -1,96 +1,259 @@
-<div class="desktop">
-    <!-- Иконка Diana -->
-    <div class="desktop-icon" onclick="toggleWin('folder-win', true)">
-        <img src="https://alexmeub.com" alt="Folder">
-        <span>Diana</span>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Дианы</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #0a0a0c;
+            color: #e4e4e7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Интерактивный живой фон со звездами */
+        #space-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* Главный контейнер истории */
+        .story-container {
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            width: 90%;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        /* Элементы интерактивных экранов */
+        .screen {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .screen.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #ffffff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #a1a1aa;
+            text-align: left;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        /* Сетка интерактивных причин */
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 30px 0;
+        }
+        .reason-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+        .reason-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            transform: translateX(4px);
+        }
+        .reason-num {
+            font-family: monospace;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 18px;
+            opacity: 0.5;
+        }
+
+        /* Кнопки навигации по фильму */
+        .next-btn {
+            background-color: #ffffff;
+            color: #0a0a0c;
+            border: none;
+            padding: 14px 35px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255,255,255,0.4);
+            background-color: #f4f4f5;
+        }
+
+        /* Финальный экран */
+        .final-title {
+            font-size: 32px;
+            font-weight: 200;
+            color: #ffffff;
+            animation: pulse 3s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+            100% { text-shadow: 0 0 30px rgba(255,255,255,0.6); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Контейнер для процедурных звезд -->
+<div id="space-bg"></div>
+
+<div class="story-container">
+    
+    <!-- ЭКРАН 1: Причины -->
+    <div class="screen active" id="screen-1">
+        <h1>Причины, почему ты прекрасна</h1>
+        <div class="reasons-grid">
+            <div class="reason-card"><span class="reason-num">01</span><span>Ты ценишь по-настоящему людей</span></div>
+            <div class="reason-card"><span class="reason-num">02</span><span>Ты добрая</span></div>
+            <div class="reason-card"><span class="reason-num">03</span><span>Ты умеешь быть искренней</span></div>
+            <div class="reason-card"><span class="reason-num">04</span><span>Ты умная</span></div>
+            <div class="reason-card"><span class="reason-num">05</span><span>У тебя красивый голос</span></div>
+            <div class="reason-card"><span class="reason-num">06</span><span>Ты сильная</span></div>
+            <div class="reason-card"><span class="reason-num">07</span><span>Ты хорошая, не сильно требовательная и очень ласковая</span></div>
+        </div>
+        <button class="next-btn" onclick="nextScreen(2)">Читать дальше →</button>
     </div>
 
-    <!-- ОКНО ПАПКИ -->
-    <div class="xp-window" id="folder-win" style="width: 350px; top: 80px; left: 40px;">
-        <div class="xp-titlebar" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
-            <div class="xp-title-text">
-                <img src="https://alexmeub.com">
-                <span>Diana</span>
-            </div>
-            <div class="xp-controls">
-                <button class="btn-min" onclick="toggleWin('folder-win', false)"></button>
-                <button class="btn-close" onclick="toggleWin('folder-win', false)"></button>
-            </div>
-        </div>
-        <div class="xp-window-body">
-            <div class="folder-view">
-                <div class="desktop-icon" onclick="toggleWin('notepad-win', true)" style="padding: 4px;">
-                    <img src="https://alexmeub.com">
-                    <span style="color: black; text-shadow: none;">Причины.txt</span>
-                </div>
-            </div>
-        </div>
+    <!-- ЭКРАН 2: Мысли и откровение -->
+    <div class="screen" id="screen-2">
+        <h1>О тебе</h1>
+        <p>Ты прекрасная на самом деле, я рад что вообще с тобой, я буду продолжать быть с тобой.</p>
+        <p>Никогда не обращай внимание на мнение других людей, если оно не сконструированное, ведь ты достойна лучшего.</p>
+        <p>Ты красивая, ты умная и хорошая девочка, я никогда не понимал, как к тебе можно плохо относиться. Я делал больно, но от этого мне тоже было больно.</p>
+        <p>Ты прекрасна, ведь ты настоящая. Ты не боишься говорить правду, ты можешь высказать свое мнение, с тобой есть о чем поговорить. На деле, это может и не заметно, но пойми, что это заметит каждый человек.</p>
+        <button class="next-btn" onclick="nextScreen(3)">Продолжить →</button>
     </div>
 
-    <!-- ОКНО БЛОКНОТА -->
-    <div class="xp-window" id="notepad-win" style="width: 580px; top: 40px; left: 150px;">
-        <div class="xp-titlebar" onmousedown="dragStart(event)" ontouchstart="dragStart(event)">
-            <div class="xp-title-text">
-                <img src="https://alexmeub.com">
-                <span>Причины.txt — Блокнот</span>
-            </div>
-            <div class="xp-controls">
-                <button class="btn-min" onclick="toggleWin('notepad-win', false)"></button>
-                <button class="btn-close" onclick="toggleWin('notepad-win', false)"></button>
-            </div>
-        </div>
-        <div class="xp-window-body">
-            <div class="notepad-textarea" contenteditable="false">Причины почему ты прекрасна
-1. Ты ценишь по настоящему людей
-2. Ты добрая
-3. Ты умеешь быть искренной 
-4. Ты умная
-5. У тебя красивый голос
-6. Ты сильная
-7. Ты хорошая, не сильно требовательная и очень ласковая
-
-Ты прекрасная на самом деле, я рад что вообще с тобой, я буду продолжать быть с тобой.
-Никогда не обращай внимание, на мнение других людей, если оно не сконструированное, ведь ты достойна лучшего.
-Ты красивая, ты умная и хорошая девочка, я никогда не понимал, как к тебе можно плохо относится. Я делал больно, но от этого мне тоже было больно. 
-Ты прекрасна, ведь ты настоящая. Ты не боишься говорить правду, ты можете высказать свое мнение, с тобой есть о чем поговорить. На деле, это может и не заметно, но пойми, что это заметит каждый человек.
-Давай по честному, ты мне говорила что я могу законтактить с любым человеком, да по сути так и есть, но давай по честному, а ты чтоли нет?
-У тебя тоже очень хорошо получается, ты можешь это и я знаю, ты способна на такое, ты можете тоже самое, что могу и я. Ты не отличаешься способностями какими то, ты можете все тоже самое, что и я.
-Ты можете общаться, с тобой интересно. У тебя очень красивый голос, у тебя всегда есть что рассказать, на какую тему пошутить и тп. Ты очень хороший собеседник, сказать честно, даже самый любимый собеседник)
-С тобой очень комфортно и приятно общаться, ты всегда можешь поддержать диалог, помочь, дать совет. Так что, Диан, ты очень хороша во всем, ты хорошая.
-Мне нравится все в тебе. Ты умеешь уважать людей, любить, ценить, представь только, таких девушек как ты очень мало.
-На самом то деле, ты не просто шаблонная, Диан, если с тобой общаться часто, то можно сразу понять, что ты не просто шаблонная девка, ты что то другое. Поэтому ты и заинтересовала меня. Я не шучу, ты прекрасна.</div>
-        </div>
+    <!-- ЭКРАН 3: Настоящая связь -->
+    <div class="screen" id="screen-3">
+        <h1>Свой среди своих</h1>
+        <p>Давай по-честному, ты мне говорила что я могу законтактить с любым человеком, да по сути так и есть, но давай по-честному, а ты что ли нет?</p>
+        <p>У тебя тоже очень хорошо получается, ты можешь это и я знаю, ты способна на такое, ты можешь то же самое, что могу и я. Ты не отличаешься способностями какими-то, ты можешь все то же самое, что и я.</p>
+        <p>Ты можешь общаться, с тобой интересно. У тебя очень красивый голос, у тебя всегда есть что рассказать, на какую тему пошутить и т.п. Ты очень хороший собеседник, сказать честно, даже самый любимый собеседник)</p>
+        <button class="next-btn" onclick="nextScreen(4)">Дальше →</button>
     </div>
+
+    <!-- ЭКРАН 4: Финал -->
+    <div class="screen" id="screen-4">
+        <h1>Редкость</h1>
+        <p>С тобой очень комфортно и приятно общаться, ты всегда можешь поддержать диалог, помочь, дать совет. Так что, Диан, ты очень хороша во всем, ты хорошая.</p>
+        <p>Мне нравится все в тебе. Ты умеешь уважать людей, любить, ценить, представь только, таких девушек как ты очень мало.</p>
+        <p>На самом-то деле, ты не просто шаблонная, Диан, если с тобой общаться часто, то можно сразу понять, что ты не просто шаблонная девка, ты что-то другое. Поэтому ты и заинтересовала меня. Я не шучу, ты прекрасна.</p>
+        <h1 class="final-title" style="margin-top: 50px;">Ты — что-то другое. ✨</h1>
+    </div>
+
 </div>
 
-<!-- МЕНЮ ПУСК -->
-<div class="xp-start-menu" id="start-menu">
-    <div class="xp-menu-header">
-        <img src="https://alexmeub.com">
-        <span>Administrator</span>
-    </div>
-    <div class="xp-menu-body">
-        <div class="xp-menu-left">
-            <div class="xp-menu-item" onclick="alert('Диана — самая лучшая девочка в мире!')">
-                <img src="https://alexmeub.com">
-                <span>Мой профиль</span>
-            </div>
-            <div class="xp-menu-item" onclick="toggleWin('notepad-win', true); toggleMenu();">
-                <img src="https://alexmeub.com">
-                <span>Читать письмо</span>
-            </div>
-        </div>
-    </div>
-    <div class="xp-menu-footer">
-        <button class="xp-logoff-btn" onclick="alert('Просто закройте вкладку!');">Выключение</button>
-    </div>
-</div>
+<script>
+    // Математическая генерация звездного неба на лету
+    const bg = document.getElementById('space-bg');
+    const starCount = 60;
+    
+    for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Рандомные размеры и позиции
+        const size = Math.random() * 2 + 1;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + 'vw';
+        
+        // Разные тайминги анимации для эффекта глубины параллакса
+        star.style.animationDuration = (Math.random() * 8 + 4) + 's';
+        star.style.animationDelay = (Math.random() * 5) + 's';
+        
+        bg.appendChild(star);
+    }
 
-<!-- ТАСКБАР -->
-<div class="xp-taskbar">
-    <div class="xp-start-btn" onclick="toggleMenu()">
-        <img src="https://alexmeub.com" width="16" height="16">
-        <span>пуск</span>
-    </div>
-    <div class="xp-clock" id="clock">00:00</div>
-</div>
+    // Логика переключения кинематографичных экранов
+    function nextScreen(screenNum) {
+        // Находим текущий активный экран
+        const currentActive = document.querySelector('.screen.active');
+        if (currentActive) {
+            currentActive.style.opacity = '0';
+            currentActive.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                currentActive.classList.remove('active');
+                
+                // Включаем следующий экран
+                const nextTarget = document.getElementById('screen-' + screenNum);
+                nextTarget.classList.add('active');
+                
+                // Триггер анимации проявления
+                setTimeout(() => {
+                    nextTarget.style.opacity = '1';
+                    nextTarget.style.transform = 'translateY(0)';
+                }, 50);
+                
+                // Если это финал — делаем звезды чуть быстрее и ярче
+                if (screenNum === 4) {
+                    document.querySelectorAll('.star').forEach(s => {
+                        s.style.backgroundColor = '#fff';
+                        s.style.boxShadow = '0 0 10px #fff';
+                    });
+                }
+            }, 600); // Тайминг совпадает с transition в CSS
+        }
+    }
+</script>
+</body>
+</html>
